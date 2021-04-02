@@ -96,7 +96,7 @@ Unlike Bitcoin, ```n``` cannot have decimals, so it is an integer from ```0``` t
 
 Increasing the target by 1 doubles the difficulty and average time taken.
 A standard pc has 2GHz ~= 2^30 calcs/s of processing power.
-For my CPU, this means it can do about 50000 hashes/s ~= 2^15 hashes/s.
+For my CPU, this means it can do about 120,000 hashes/s ~= 2^16 hashes/s.
 This means:
 * a target of 16 takes 1 seconds
 * a target of 17 takes 2 seconds

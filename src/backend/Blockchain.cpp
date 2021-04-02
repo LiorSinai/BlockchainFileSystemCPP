@@ -133,13 +133,34 @@ void Blockchain::verify(){
 }
 
 
-inline bool start_with_n(std::string const & s, int n, char target)
+inline bool starts_with_n(std::string const & s, int n, char target)
 {
     n = n > s.length() ? s.length() : n;
     for (int i {0}; i < n; i++){
         if (s[i] != target) return false;
     }   
     return true;
+} 
+
+bool is_valid_proof(std::string const & s, int target)
+{
+    if (starts_with_n(s, target/4, '0')){
+        int idx = target/4;
+        int rem = target - idx*4 ;
+        if (rem == 0){
+            return true;
+        }
+        else if (rem==1){
+            return s[idx] < '8';
+        }
+        else if (rem==2){
+            return s[idx] < '4';
+        }
+        else if (rem==3){
+            return s[idx] < '2';
+        }
+    }
+    return false;
 } 
 
 void copy_into_end(std::vector<uint8_t>& vec1,  std::vector<uint8_t>& vec2)
@@ -153,15 +174,16 @@ void copy_into_end(std::vector<uint8_t>& vec1,  std::vector<uint8_t>& vec2)
     }
 }
 
-void bytes_add_1(std::vector<uint8_t>& bytes)
+
+void bytes_add_1(std::vector<uint8_t>& bytes, int first)
 {
     int idx = bytes.size() - 1;
-    while (bytes[idx] == 255 && idx >= 0){
+    while (bytes[idx] == 255 && idx >= first){
             bytes[idx] = 0;
             idx -= 1;
     }
-    if (idx == -1){
-        bytes.insert(bytes.begin() , 1);
+    if (idx == first - 1){
+        bytes.insert(bytes.begin() + first, 1);
     }
     else{
         bytes[idx] += 1;
@@ -176,7 +198,7 @@ unsigned long int Blockchain::proofOfWork(std::vector<uint8_t> bytes, unsigned l
     * Increasing the target by 1 doubles the difficulty and average time taken
     * Max difficulty = 256 (only valid solution is 256 zeros)
     * -- A standard pc has 2GHz ~= 2^30 calcs/s of processing power. 
-    * -- Hashing power of this CPU is 50000 hashes/s ~= 2^15 hashes/s
+    * -- Hashing power of this CPU is 120000 hashes/s ~= 2^16.8 hashes/s
     *    -> a target of 16 will take 1 seconds
     *    -> a target of 17 will take 2 seconds
     *    -> a target of 18 will take 4 seconds
@@ -185,10 +207,12 @@ unsigned long int Blockchain::proofOfWork(std::vector<uint8_t> bytes, unsigned l
     *    ...
     *    -> a target of 30 will take 16384 seconds ~= 4.5 hours
     *    ... 
-    *    -> a target of 50 will take 1 year
+    *    -> a target of 41 will take 1 year
     *    -> current bitcoin target is 76. This will take 36 billion years
     */
     unsigned long MAX_DIFFICULTY = 256 ;
+    unsigned long first = bytes.size() - sizeof(start);
+
     std::vector<uint8_t> bytes_WIP;
     unsigned long n = target > MAX_DIFFICULTY ? MAX_DIFFICULTY : target; //
     unsigned long int nonce = start;
@@ -196,16 +220,16 @@ unsigned long int Blockchain::proofOfWork(std::vector<uint8_t> bytes, unsigned l
     bytes_WIP.assign(bytes.begin(), bytes.end() );
 
     std::string hash = sha256(bytes.data(), bytes.size());
-    std::string bin_hash = utilities::hex2bin(hash);
+    copy_into_end(bytes_WIP, nonceBytes);
 
-    while (!start_with_n(bin_hash, n, '0')){
-        bytes_add_1(nonceBytes);
-        copy_into_end(bytes_WIP, nonceBytes);
-
+    while (!is_valid_proof(hash, n)){
+        bytes_add_1(bytes_WIP, first);
         hash = sha256(bytes_WIP.data(), bytes_WIP.size());
-        bin_hash = utilities::hex2bin(hash);
     }
 
+    std::string bin_hash = utilities::hex2bin(hash);
+    bool check = starts_with_n(bin_hash, n, '0');
+    nonceBytes = std::vector<uint8_t>(bytes_WIP.begin() + first, bytes_WIP.end());
     nonce  = utilities::byte2long(nonceBytes);
 
     return nonce;

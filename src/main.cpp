@@ -43,43 +43,15 @@ int main(int argc, char *argv[])
     cli->run();
 
     //run_demos();
-    // std::cout << "Press any key to exit" << std::endl;
-    // std::cin.get();
-    
+
     return 0;
 }
 
 void run_demos()
 {
-    /*test SHA256 */
-    //demo_SHA256();
-
-    /*test time */
-    //demo_time();
-
-    /* test load file */
-    //demo_sha256_file();
-
-    /* test tokeniser */
-    //demo_tokeniser();
-
     /* test block */
     demo_block();
-
-    /* demo bytes */
-    //demo_bytes();
-
-    // try{
-    //     std::unique_ptr<Blockchain> blockchain = loadBlockchainFromJSON("../MyBlockchain/MyBlockchain.json", "..");
-    //     blockchain->print();
-    // }
-    // catch (utilities::FileNotFoundException &e){
-    //     std::cerr << e.what() << std::endl;
-    // }
-    // catch (InvalidBlockchainException &e){
-    //     std::cout << e.what() << std::endl;
-    // }
-    // catch (std::exception &e){
-    //     std::cout << e.what() << std::endl;
-    // }
+        
+    std::cout << "Press any key to exit" << std::endl;
+    std::cin.get();
 }
