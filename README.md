@@ -104,7 +104,7 @@ This means:
 *    .... 
 * a target of 20 takes 16 seconds
 * a target of 30 will take 16384 seconds ~= 4.5 hours
-* a target of 50 will take 1 year
+* a target of 41 will take 1 year
 * a target of 76 will take 36 billion years
 
 A target of 76 was the Bitcoin difficulty at the time of this commit. (Conversion: 256 - 208 - log2((2^16-1)/D) where D is the difficulty.)
