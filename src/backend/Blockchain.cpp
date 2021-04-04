@@ -18,7 +18,7 @@ Block Blockchain::makeBlock()
         std::vector<unsigned char> header = this->back().getHeader();
         previousHash = sha256(header.data(), header.size());
     }
-    return Block(this->getIndex() + 1, previousHash, this->directory, std::time(0), 1, 0);
+    return Block(this->getIndex() + 1, previousHash, this->directory, std::time(0), 0, 0);
 }
 
 
@@ -36,39 +36,37 @@ void Blockchain::commitBlock(Block& block, bool doProofofWork)
        throw InvalidBlockchainException("blockchain is not verified"); 
     }
     // checks
-    valid = valid && (block.getIndex() == this->getIndex() + 1);
+    if (block.getIndex() != this->getIndex() + 1){
+        msg = std::string("Block is not valid: index must follow last index in the blockchain: " + 
+                            std::to_string(block.getIndex()) + " != " + std::to_string(this->getIndex() + 1));
+        throw InvalidBlockException(msg);
+    }
     if (block.getIndex() > 0){
         std::string previousHash = this->back().hash();
-        valid = valid && (block.getPreviousHash() == previousHash);
-        if (!valid){
+        if (block.getPreviousHash() != previousHash){
             msg = std::string("Previous block hashes do not match:\nProposed block:   ") + block.getPreviousHash() + 
                                                      std::string("\nBlockchain block: ") + previousHash;
             throw InvalidBlockException("Block is not valid: " + msg);
         }
     }
-    valid = valid && (block.version == this->version);
-    if (!valid){
-        msg = std::string("Block is not valid: versions do not match: " + std::to_string(block.version) + " != " + std::to_string(this->version));
+    if (block.version != this->version){
+        msg = std::string("Block is not valid: versions do not match: ") + std::to_string(block.version) + " != " + std::to_string(this->version);
         throw InvalidBlockException(msg);
     }
-    valid = valid && (block.getTimeStamp() <= std::time(0));
-    if (!valid){
-        msg = std::string("Block is not valid: creation time is in the future");
+    if (block.getTimeStamp() > std::time(0)){
+        std::time_t blocktime = block.getTimeStamp();
+        struct tm* timeinfo = gmtime (& blocktime);
+        msg = std::string("Block is not valid: creation time is in the future: ") + std::asctime(timeinfo);
         throw InvalidBlockException(msg);
     }
-    if (valid){
-        unsigned long proof = 0;
-        if (doProofofWork) {proof = proofOfWork(block.getHeader(), block.getTarget(), block.getNonce());}
-        block.setNonce(proof);
-        this->blocks.push_back(block);
-    }
-    else{
-        throw InvalidBlockException();
-    }
+    unsigned long proof = 0;
+    if (doProofofWork) {proof = proofOfWork(block.getHeader(), block.getTarget(), block.getNonce());}
+    block.setNonce(proof);
+    this->blocks.push_back(block);
 }
 
 
-void Blockchain::print()
+void Blockchain::print(bool print_blocks)
 {   
     std::cout << "------------------------------------------------------------------------------------------------" << std::endl;
     std::cout << "------------------------------------------------------------------------------------------------" << std::endl;
@@ -79,12 +77,15 @@ void Blockchain::print()
     struct tm* timeinfo = gmtime (& blocktime);
 
     std::cout << "timestamp UTC: " << std::asctime(timeinfo);
+    std::cout << "name:          " << this->name << std::endl;
     std::cout << "directory:     " << this->directory << std::endl;
     std::cout << "height:        " << std::to_string(this->blocks.size()) << std::endl;
     std::cout << "\n";
 
-    for (Block &block: this->blocks){
-        block.print();        
+    if (print_blocks){
+        for (Block &block: this->blocks){
+            block.print();        
+        }
     }
     std::cout << "------------------------------------------------------------------------------------------------" << std::endl;
     std::cout << "------------------------------------------------------------------------------------------------" << std::endl;
@@ -145,19 +146,19 @@ inline bool starts_with_n(std::string const & s, int n, char target)
 bool is_valid_proof(std::string const & s, int target)
 {
     if (starts_with_n(s, target/4, '0')){
-        int idx = target/4;
+        int idx = target/4; // a hex char has 4 bits
         int rem = target - idx*4 ;
         if (rem == 0){
             return true;
         }
         else if (rem==1){
-            return s[idx] < '8';
+            return s[idx] < '8'; // hex2bin(7) = 0111
         }
         else if (rem==2){
-            return s[idx] < '4';
+            return s[idx] < '4'; // hex2bin(3) = 0011
         }
         else if (rem==3){
-            return s[idx] < '2';
+            return s[idx] < '2'; // hex2bin(1) = 0001
         }
     }
     return false;
@@ -175,19 +176,18 @@ void copy_into_end(std::vector<uint8_t>& vec1,  std::vector<uint8_t>& vec2)
 }
 
 
-void bytes_add_1(std::vector<uint8_t>& bytes, int first)
+void bytes_add_1(std::vector<uint8_t>& bytes, int first = 0)
 {
     int idx = bytes.size() - 1;
     while (bytes[idx] == 255 && idx >= first){
             bytes[idx] = 0;
             idx -= 1;
     }
-    if (idx == first - 1){
+    if (idx >= first) {
+        bytes[idx] += 1;
         bytes.insert(bytes.begin() + first, 1);
     }
-    else{
-        bytes[idx] += 1;
-    }
+    //else overflow
 }
 
 unsigned long int Blockchain::proofOfWork(std::vector<uint8_t> bytes, unsigned long int target, unsigned long int start)

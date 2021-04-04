@@ -101,10 +101,10 @@ void JSONwriter::write_map(std::string fieldname, std::map<keyType, valType> arr
 {
     this->write_comma();
     bool first = true;
-    this->stream << "\"" << fieldname << "\":[" ; 
+    this->stream << "\"" << fieldname << "\":{" ; 
     std::map<keyType, valType>::iterator itr; 
-    std::string delim_outer_ = this->delim_outer + "\t\t";
-    std::string delim_inner_ = this->delim_inner + "\t\t";
+    std::string delim_outer_ = this->delim_outer + "\t";
+    std::string delim_inner_ = this->delim_inner + "\t";
 
     for (itr = arr.begin(); itr != arr.end(); ++itr){
         if (first){
@@ -113,13 +113,10 @@ void JSONwriter::write_map(std::string fieldname, std::map<keyType, valType> arr
         else{
             this->stream << ",";
         }
-        this->stream << delim_outer_ << "{";
-        this->stream << delim_inner_ << "\"" << keyName << "\":"  "\"" << itr->first << "\"," ;
-        this->stream << delim_inner_ << "\"" << elementName << "\":" ;
+        this->stream << delim_inner_ << "\"" << itr->first << "\":" ;
         this->stream << itr->second; //assume object type
-        this->stream << delim_outer_ << "}";
     }
-    this->stream << delim_inner << "]"; 
+    this->stream << delim_inner << "}"; 
 }
 
 

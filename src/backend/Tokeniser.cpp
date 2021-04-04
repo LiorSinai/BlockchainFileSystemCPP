@@ -15,6 +15,7 @@ Token Tokeniser::make_token(PseudoToken pseudoToken)
     std::string filePath = pseudoToken.filePath;
 
     std::size_t found   = filePath.find_last_of("/\\");
+    if (found == std::string::npos) found = -1;
     std::string fileName = filePath.substr(found+1);
     
     // time
@@ -160,8 +161,7 @@ std::string Tokeniser::hash_token(Token token)
 }
 
 
-bool Tokeniser::
-verify_token(Token token){
+bool Tokeniser::verify_token(Token token){
     /* load token data and check hash */
     std::vector<uint8_t> fileData;
     std::string filePath (this->directory + token.fileName);

@@ -58,13 +58,14 @@ void Block::print()
     std::time_t blocktime = this->getTimeStamp();
     struct tm* timeinfo = gmtime (& blocktime);
    
-    std::cout << "version:       " << this->version << std::endl;
-    std::cout << "previous hash: " << this->getPreviousHash() << std::endl;
-    std::cout << "this hash:     " << this->hash() << std::endl;
-    std::cout << "Merkle root:   " << this->MerkleRoot() << std::endl;
-    std::cout << "timestamp:     " << std::asctime(timeinfo);
-    std::cout << "target:        " << this->getTarget() << std::endl;
-    std::cout << "nonce:         " << this->getNonce() << std::endl;
+    std::cout << "version:          " << this->version << std::endl;
+    std::cout << "previous hash:    " << this->getPreviousHash() << std::endl;
+    std::cout << "this hash:        " << this->hash() << std::endl;
+    std::cout << "Merkle root:      " << this->MerkleRoot() << std::endl;
+    std::cout << "timestamp:        " << std::asctime(timeinfo);
+    std::cout << "target:           " << this->getTarget() << std::endl;
+    std::cout << "nonce:            " << this->getNonce() << std::endl;
+    std::cout << "number of tokens: " << this->tokens.size() << std::endl;
     std::cout << "\n";
 
     std::cout << "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " << std::endl;
@@ -139,7 +140,7 @@ std::string Block::hash()
 
 void Block::verify(){
     std::map<std::string, Token>::iterator itr; 
-    std::string msg_block = "\nBlock " + std::to_string(this->getIndex()) + " not verfied";
+    std::string msg_block = "\nBlock " + std::to_string(this->getIndex()) + " not verified";
     for (itr = this->tokens.begin(); itr != this->tokens.end(); ++itr) { 
         try{
             tokeniser->verify_token(itr->second);

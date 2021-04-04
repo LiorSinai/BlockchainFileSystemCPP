@@ -56,7 +56,7 @@ private:
     void print_header(std::string index);
     void load(std::string fileName, std::string dirPath = "");
     void stage_token();
-    void print_blockchain();
+    void print_blockchain(std::string print_header);
     void print_block(std::string index);
     void print_token(std::string id);
     void save_blockchain();

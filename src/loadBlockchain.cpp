@@ -8,6 +8,7 @@
 #include "loadBlockchain.h"
 
 using namespace minijson;
+using namespace utilities;
 
 std::unique_ptr<Blockchain> loadBlockchainFromJSON (std::string fileName, std::string pathToDir)
 {   
@@ -51,27 +52,18 @@ std::unique_ptr<Blockchain> loadBlockchainFromJSON (std::string fileName, std::s
                     <<"target">> [&]{b.target = v.as_long(); }
                     <<"tokens">> [&]
                     {
-                        parse_array(ctx, [&](value v)
+                        parse_object(ctx, [&](const char* k, value v)
                         {   
                             Token token {};
-                            std::string id{};
+                            std::string id = std::string(k, 64);
                             parse_object(ctx, [&](const char* k, value v)
                             {   
                                 dispatch (k)
-                                <<"id">>[&]{id = v.as_string();}
-                                <<"token">>[&]
-                                {
-                                    parse_object(ctx, [&](const char* k, value v)
-                                    {
-                                        dispatch (k)
-                                        <<"userName">> [&]{ token.userName = v.as_string(); }
-                                        <<"fileName">> [&]{ token.fileName = v.as_string(); }
-                                        <<"fileHash">> [&]{ token.fileHash = v.as_string(); }
-                                        <<"author">> [&]{ token.author = v.as_string(); }
-                                        <<"timeStamp">> [&]{ token.timeStamp = v.as_long(); }
-                                         <<any>> [&]{ ignore(ctx); };
-                                    }); // token
-                                } 
+                                <<"userName">> [&]{ token.userName = v.as_string(); }
+                                <<"fileName">> [&]{ token.fileName = v.as_string(); }
+                                <<"fileHash">> [&]{ token.fileHash = v.as_string(); }
+                                <<"author">> [&]{ token.author = v.as_string(); }
+                                <<"timeStamp">> [&]{ token.timeStamp = v.as_long(); }
                                 <<any>> [&]{ ignore(ctx); };
                             }); // token map
                             b.tokens.insert(std::pair<std::string, Token>(id, token));

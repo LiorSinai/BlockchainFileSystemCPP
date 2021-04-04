@@ -118,7 +118,7 @@ void demo_block(){
     std::string filePath;
     PseudoToken t;
     Token token;
-    user = "@LiorSinai";
+    user = "@admin";
 
     // HelloWorld
     filePath = "../files/Hello.txt";
@@ -174,9 +174,11 @@ void demo_block(){
     }
     catch (InvalidBlockException &e ){
         std::cerr << "invalid block:" << e.what() << std::endl;
+        return;
     }
     catch (std::exception &e ){
         std::cerr << e.what() << std::endl;
+        return;
     }
     std::cout << block0.isVerified() << std::endl;
 
@@ -187,9 +189,11 @@ void demo_block(){
     }
     catch (InvalidBlockException &e){
         std::cerr << e.what() << std::endl;
+        return;
     }
     catch (std::exception &e){
         std::cerr << e.what() << std::endl;
+        return;
     }
     /* block 1: empty */
     previousHash = block0.hash();
@@ -205,6 +209,7 @@ void demo_block(){
     }
     catch (InvalidBlockchainException &e){
         std::cerr << "invalid blockchain: " << e.what() <<  std::endl;
+        return;
     }
     std::cout << blockchain->isVerified() << std::endl;
 

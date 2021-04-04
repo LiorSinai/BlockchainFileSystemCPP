@@ -38,7 +38,7 @@ public:
     //functions
     Block makeBlock();
     void commitBlock(Block& block, bool doProofofWork=true);
-    void print();
+    void print(bool print_blocks=true);
     void verify();
     bool isVerified(){return this->verified;}
     std::string toJSON(int level=0);

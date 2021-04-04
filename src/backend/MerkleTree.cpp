@@ -42,7 +42,6 @@ std::string MerkleTree::hashLayer(std::vector<std::vector<unsigned char>> layer)
      if (layer.size() % 2 == 1)
     {
         //odd number of nodes, therefore the last node needs to be paired with itself
-        //
         int i = layer.size() - 1;
         std::vector<unsigned char> node(layer[i]);
         node.insert(node.end(), layer[i].begin(), layer[i].end() );

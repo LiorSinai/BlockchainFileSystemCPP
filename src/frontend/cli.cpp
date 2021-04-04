@@ -118,7 +118,7 @@ void CommandLineInterface::dispatch_option(CLICommand command)
         }
     }
     else if (option == "p" || option == "-print-blockchain"){
-        print_blockchain();
+        print_blockchain(argv);
     }
     else if (option == "-print-block"){
         print_block(argv);
@@ -175,8 +175,8 @@ void CommandLineInterface::help()
     std::cout << "-h | --help                     show this help menu" << std::endl;
     std::cout << "     --header [index]           show the raw header for a block" << std::endl;
     std::cout << "-i | --initialise               initialise a new blockchain" << std::endl;
-    std::cout << "-l | --load filePath [dirPath]  load the blockchain from a .json file (include extension). path=directory with the blockchain folder" << std::endl;
-    std::cout << "-p | --print-blockchain         print the blockchain" << std::endl;
+    std::cout << "-l | --load filePath [dirPath]  load the blockchain from a .json file (include extension). dirPath=directory with the blockchain folder" << std::endl;
+    std::cout << "-p | --print-blockchain [h]     print the blockchain. If h, print header only" << std::endl;
     std::cout << "     --print-block [index]      print block at index in the blockchain." << std::endl;
     std::cout << "     --print-token [id]         print token with hash=id." << std::endl;
     std::cout << "-q | --quit                     quit" << std::endl;
@@ -366,10 +366,11 @@ void CommandLineInterface::commit_block()
     }
 }
 
-void CommandLineInterface::print_blockchain()
+void CommandLineInterface::print_blockchain(std::string print_header)
 {
     if (this->blockchain){
-        this->blockchain->print();
+        bool print_blocks = !(print_header == "h");
+        this->blockchain->print(print_blocks);
     }
     else{
         std::cout << notInitialisedMessage << std::endl;

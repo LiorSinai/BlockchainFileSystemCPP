@@ -39,7 +39,7 @@ Available commands:
       --header [index]           show the raw header for a block
  -i | --initialise               initialise a new blockchain
  -l | --load filePath [dirPath]  load the blockchain from a .json file (include extension).
- -p | --print-blockchain         print the blockchain
+ -p | --print-blockchain [h]     print the blockchain. If h, print header only
       --print-block [index]      print block at index in the blockchain.
       --print-token [id]         print token with hash=id.
  -q | --quit                     quit
