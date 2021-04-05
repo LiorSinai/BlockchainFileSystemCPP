@@ -31,8 +31,18 @@ class Blockchain
 public:
     // Constructor 
     Blockchain(){this->directory="Blockchain"; this->timeStamp = std::time(0);}
-    Blockchain(std::string directory_) {this->directory=directory_; this->name =directory_; this->timeStamp = std::time(0);};
-    Blockchain(std::string directory_, std::time_t t) {this->directory=directory_; this->name =directory_; this->timeStamp = t;};
+    Blockchain(std::string directory_) {
+        this->directory=directory_; 
+        std::size_t found   = directory_.find_last_of("/\\");
+        if (found == std::string::npos) found = -1;
+        this->name =directory_.substr(found+1); 
+        this->timeStamp = std::time(0);};
+    Blockchain(std::string directory_, std::time_t t) 
+        {this->directory=directory_; 
+        std::size_t found   = directory_.find_last_of("/\\");
+        if (found == std::string::npos) found = -1;
+        this->name =directory_.substr(found+1); 
+        this->timeStamp = t;};
     const long version = 1;
 
     //functions
@@ -42,6 +52,8 @@ public:
     void verify();
     bool isVerified(){return this->verified;}
     std::string toJSON(int level=0);
+    bool is_valid_proof(std::string const & s, int target);
+    bool is_valid_proof(unsigned char (& bytes)[SHA256::DIGEST_SIZE], int target);
 
     unsigned long int proofOfWork(std::vector<uint8_t> bytes,  unsigned long int target=0, unsigned long int start=0);
 

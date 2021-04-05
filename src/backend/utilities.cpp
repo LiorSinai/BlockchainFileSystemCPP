@@ -286,4 +286,18 @@ unsigned long long hex2dec(std::string hex){
 
     return x;
 }
+
+void bytes_add_1(std::vector<uint8_t>& bytes, int first)
+{
+    int idx = bytes.size() - 1;
+    while (bytes[idx] == 255 && idx >= first){
+        bytes[idx] = 0;
+        idx -= 1;
+    }
+    if (idx >= first) {
+        bytes[idx] += 1;
+    }
+    //else overflow
+}
+
 }

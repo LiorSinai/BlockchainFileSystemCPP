@@ -47,6 +47,8 @@ std::vector<uint8_t> longlong2byte(unsigned long long x);
 unsigned long  byte2long(std::vector<uint8_t>& bytes);
 unsigned long long  byte2longlong(std::vector<uint8_t>& bytes);
 
+void bytes_add_1(std::vector<uint8_t>& bytes, int first = 0);
+
 }
 
 #endif // UTILITIES_H

@@ -29,4 +29,10 @@ public:
     bool run();
 };
 
+class BytesAdd1Test: public UnitTest{
+public:
+    BytesAdd1Test() : UnitTest("BytesAdd1") {};
+    bool run();
+};
+
 #endif //UTILITIES_TESTS_H

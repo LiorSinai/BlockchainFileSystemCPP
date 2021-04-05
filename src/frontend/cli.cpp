@@ -77,8 +77,6 @@ CLICommand CommandLineInterface::parse_line(std::string line)
     found_dash = line.find('-');
     found_space1 = line.find(' ', found_dash);
     found_space1 = std::min(found_space1, line.length());
-    // found_space2 = line.find(' ', found_space1 + 1);
-    // found_space2 = std::min(found_space2, line.length());
     if (found_dash !=std::string::npos){
         command.argc = line.substr(found_dash + 1, found_space1-found_dash - 1);\
         if (found_space1 < line.length()) command.argv = split(line.substr(found_space1+1, line.length()));
@@ -343,9 +341,13 @@ void CommandLineInterface::commit_block()
     }
     std::cout << "attempting to commit block ..." << std::endl;
     try{
+        // set target
+        this->block->setTarget(target);
+        // proof of work
         std::time_t start_time = std::time(0);
         blockchain->commitBlock(*block);
         std::time_t end_time = std::time(0);
+        //feedback
         std::cout << "done" << std::endl;
         std::cout << "proof: " << block->getProof() << std::endl;
         std::cout << "time taken: " << end_time - start_time << "s" << std::endl;
@@ -569,18 +571,14 @@ void CommandLineInterface::print_header(std::string index_str)
 
 void CommandLineInterface::set_target(std::string target_str)
 {   
-    if (!this->block){
-        std::cout << noBlockMessage << std::endl;
+    if (!this->blockchain){
+        std::cout << notInitialisedMessage << std::endl;
     }
     else if (!target_str.empty()){
         try{
             target = std::stoi(target_str);
             if (target > 256) target = 256;
             if (target < 0)   target = 0;
-            this->block->setTarget(target);
-        }
-        catch (BlockchainFileSystemException &e){
-            std::cout << "ERROR: " << e.what() << ". Please unstage the block (-u) to change value." << std::endl;
         }
         catch (std::invalid_argument &e){
             std::cout << "ERROR: " << e.what() << ". Did you enter a number?" << std::endl;

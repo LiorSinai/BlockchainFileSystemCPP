@@ -76,7 +76,7 @@ private:
     std::unique_ptr<Blockchain> blockchain;
     std::unique_ptr<Block> block;
     Token token;
-    long target{0};
+    unsigned long target{0};
 };
 
 #endif //CLI_H

@@ -62,3 +62,34 @@ bool Hex2DecTest::run()
 
     return passed;
 }
+
+bool BytesAdd1Test::run()
+{   
+    bool passed = true;
+    std::vector<uint8_t> bytes = {0, 0, 0, 1};
+    bytes_add_1(bytes);
+    std::vector<uint8_t> expected{0, 0, 0, 2};
+    passed = passed && IS_TRUE(bytes == expected);  
+
+    bytes = {0, 0, 0, 255};
+    bytes_add_1(bytes);
+    expected = {0, 0, 1, 0};
+    passed = passed && IS_TRUE(bytes == expected);  
+
+    bytes = {0, 255, 255, 255};
+    bytes_add_1(bytes);
+    expected = {1, 0, 0, 0};
+    passed = passed && IS_TRUE(bytes == expected);  
+
+    bytes = {255, 255, 255, 255};
+    bytes_add_1(bytes);
+    expected = {0, 0, 0, 0}; //overflow
+    passed = passed && IS_TRUE(bytes == expected);  
+
+    bytes = {3, 255, 255, 255};
+    bytes_add_1(bytes, 1);
+    expected = {3, 0, 0, 0}; //overflow
+    passed = passed && IS_TRUE(bytes == expected);  
+
+    return passed;
+}

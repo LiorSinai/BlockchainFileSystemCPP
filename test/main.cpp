@@ -53,15 +53,18 @@ void utilities_tester(){
     std::unique_ptr<TestSuite> testSuite = std::make_unique<TestSuite>("utilities");
 
     Long2BytesTest* t1 = new Long2BytesTest();
-    testSuite->addTest(t1);
     HexTest* t2 = new HexTest();
-    testSuite->addTest(t2);
     Hex2DecTest* t3 = new Hex2DecTest();
+    BytesAdd1Test* t4 =  new BytesAdd1Test();
+    
+    testSuite->addTest(t1);
+    testSuite->addTest(t2);
     testSuite->addTest(t3);
+    testSuite->addTest(t4);
 
     testSuite->run();
-    
-    delete t1, t2, t3;
+
+    delete t1, t2, t3, t4;
 }
 
 
@@ -84,6 +87,6 @@ void MerkleTree_tester()
     testSuite->addTest(t6);
 
     testSuite->run();
-    
+
     delete t1, t2, t3, t4, t5, t6;
 }
